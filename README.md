@@ -1,6 +1,6 @@
 # BookMyCampus — AI-Powered University Facility Management
 
-A full-stack, multi-tenant facility booking platform built for university campuses. Features role-based access for administrators and students, a context-aware AI assistant, real-time database mutations, and intelligent transport routing.
+A full-stack, multi-tenant facility booking platform built for university campuses. Features role-based access for administrators and students, a context-aware AI assistant, real-time database mutations.
 
 ---
 
