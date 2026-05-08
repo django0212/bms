@@ -32,7 +32,7 @@ import fs from 'fs';
     await page.goto('http://localhost:3000/login');
     await page.waitForTimeout(1000);
     
-    await page.fill('input[type="email"]', 'kkhan@mit.edu');
+    await page.fill('input[type="email"]', 'amiller@mit.edu');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button:has-text("Sign In")');
 
@@ -87,13 +87,25 @@ import fs from 'fs';
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     await page.waitForTimeout(500);
 
+    await page.getByPlaceholder('e.g. Catering').fill('High-Speed Ethernet');
+    await page.getByPlaceholder('e.g. true or 1').fill('10 Gbps');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await page.waitForTimeout(500);
+
+    await page.getByPlaceholder('e.g. Catering').fill('Ergonomic Chairs');
+    await page.getByPlaceholder('e.g. true or 1').fill('20');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await page.waitForTimeout(500);
+
     await page.getByRole('button', { name: 'Add Time Block' }).click();
     const timeInputs = await page.locator('input[type="time"]').all();
     if (timeInputs.length >= 2) {
       await timeInputs[timeInputs.length - 2].fill('09:00');
       await timeInputs[timeInputs.length - 1].fill('17:00');
     }
-    await page.waitForTimeout(1000);
+    
+    // Wait a few seconds to let the viewer see all the added amenities and details
+    await page.waitForTimeout(3500);
 
     await page.getByRole('button', { name: 'Create Facility' }).click();
     
@@ -110,7 +122,7 @@ import fs from 'fs';
     // PART 3: STUDENT NEW DB / TRANSPORT DEMO
     // ---------------------------------------------------------
     console.log("3️⃣ Logging back in as MIT Student...");
-    await page.fill('input[type="email"]', 'kkhan@mit.edu');
+    await page.fill('input[type="email"]', 'amiller@mit.edu');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button:has-text("Sign In")');
 
