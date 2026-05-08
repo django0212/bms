@@ -1,0 +1,4 @@
+name,email,studentId,batch,password
+John Doe,john.doe@example.com,STU001,2024,password123
+Jane Smith,jane.smith@example.com,STU002,2025,securepass456
+Alice Johnson,alice.j@example.com,STU003,2024,tempPass789

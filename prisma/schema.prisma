@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model University {
+  id           String     @id @default(uuid())
+  name         String
+  slug         String     @unique
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  domain       String?    @unique
+  allowedDomains String[]   @default([])
+  logoUrl      String?
+  primaryColor String?
+  facilities   Facility[]
+  users        User[]
+  bookings     Booking[]
+  blackoutDates BlackoutDate[]
+  waitlist     Waitlist[]
+  events       Event[]
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  password     String      // Hashed password
+  name         String?
+  studentId    String?     @unique
+  batch        String?     // e.g. "2024", "2025"
+  role         Role        @default(STUDENT)
+  universityId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  university   University? @relation(fields: [universityId], references: [id])
+  bookings     Booking[]
+  waitlist     Waitlist[]
+  isActive     Boolean     @default(true)
+  organizedEvents     Event[]
+  eventRegistrations  EventRegistration[]
+}
+
+model Facility {
+  id               String       @id @default(uuid())
+  name             String
+  description      String?
+  type             FacilityType @default(PHYSICAL)
+  // Transport specific fields
+  startLocation    String?
+  endLocation      String?
+  operatingHours   String?
+  capacity         Int?         // Only for Transport
+  transportConfig  Json?        // Stores schedules and stops
+  
+  // Event specific fields
+  requiresApproval Boolean      @default(false)
+  eventDate        DateTime?
+  registrationDeadline DateTime?
+  
+  // Physical Facility specific fields
+  amenities        Json?
+  category         String?
+
+  // Legacy/Generic (can be ignored or used as needed, but user said only Transport has location)
+  location         String?
+
+  universityId     String
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  university       University   @relation(fields: [universityId], references: [id])
+  bookings         Booking[]
+  waitlist         Waitlist[]
+  events           Event[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  STUDENT
+}
+
+enum FacilityType {
+  PHYSICAL
+  EVENT
+  TRANSPORT
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+model Booking {
+  id           String        @id @default(uuid())
+  userId       String
+  facilityId   String
+  universityId String
+  startTime    DateTime
+  endTime      DateTime
+  status       BookingStatus @default(CONFIRMED)
+  seatNumber   Int?
+  pickupStop   String?
+  dropoffStop  String?
+  guestCount   Int?
+  specialRequests String?
+  recurrenceRule String?  // e.g., "FREQ=WEEKLY;INTERVAL=1;COUNT=5"
+  parentBookingId String? // Links recurring instances together
+  ticketCode   String?      // Unique ticket code
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id])
+  facility     Facility      @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  university   University    @relation(fields: [universityId], references: [id])
+  
+  @@index([universityId])
+  @@index([facilityId])
+  @@index([userId])
+}
+
+model BlackoutDate {
+  id           String     @id @default(uuid())
+  date         DateTime
+  reason       String?
+  universityId String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  university   University @relation(fields: [universityId], references: [id])
+
+  @@unique([date, universityId]) // Prevent duplicate blackout dates for same university
+}
+
+model Waitlist {
+  id           String   @id @default(uuid())
+  userId       String
+  facilityId   String
+  universityId String
+  startTime    DateTime
+  endTime      DateTime
+  createdAt    DateTime @default(now())
+  
+  user         User     @relation(fields: [userId], references: [id])
+  facility     Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  university   University @relation(fields: [universityId], references: [id])
+
+  @@index([facilityId, startTime])
+}
+
+model Event {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  startTime      DateTime
+  endTime        DateTime
+  location       String   // Custom location or room name
+  facilityId     String?  // Optional link to a physical facility booking
+  universityId   String
+  organizerId    String
+  
+  allowedBatches String[] @default([]) // Empty = Open to all
+  capacity       Int?
+  
+  speakers       Json?    // List of { name, bio, role }
+  resources      Json?    // List of { name, url }
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  university     University @relation(fields: [universityId], references: [id])
+  organizer      User       @relation(fields: [organizerId], references: [id])
+  facility       Facility?  @relation(fields: [facilityId], references: [id], onDelete: SetNull)
+  registrations  EventRegistration[]
+
+  @@index([universityId])
+  @@index([organizerId])
+  @@index([startTime])
+}
+
+model EventRegistration {
+  id        String            @id @default(uuid())
+  eventId   String
+  userId    String
+  status    RegistrationStatus @default(REGISTERED)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  event     Event @relation(fields: [eventId], references: [id])
+  user      User  @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId])
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  WAITLISTED
+  CANCELLED
+}

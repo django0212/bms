@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - generic:
+    - generic:
+      - generic:
+        - generic: BookMyCampus
+        - generic: Enter your university email to sign in
+      - generic:
+        - generic:
+          - generic:
+            - text: Email
+            - textbox:
+              - /placeholder: you@university.edu
+              - text: student@test.edu
+          - generic:
+            - text: Password
+            - textbox:
+              - /placeholder: ••••••••
+              - text: password123
+          - button: Sign In
+        - generic:
+          - paragraph: Don't have an account? Contact your university administrator.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e6] [cursor=pointer]:
+    - img [ref=e7]
+  - alert
+  - dialog "Security Check" [ref=e11]:
+    - generic [ref=e12]:
+      - heading "Security Check" [level=2] [ref=e13]
+      - paragraph [ref=e14]: Please complete the captcha to continue.
+    - iframe [ref=e20]:
+      - generic [active] [ref=f1e1]:
+        - generic [ref=f1e2]: This reCAPTCHA is for testing purposes only. Please report to the site admin if you are seeing this.
+        - generic [ref=f1e3]:
+          - generic [ref=f1e4]:
+            - checkbox "I'm not a robot" [ref=f1e8]
+            - generic [ref=f1e12]: I'm not a robot
+          - generic [ref=f1e13]:
+            - generic [ref=f1e16]: reCAPTCHA
+            - generic [ref=f1e17]:
+              - link "Privacy" [ref=f1e18] [cursor=pointer]:
+                - /url: https://www.google.com/intl/en/policies/privacy/
+              - text: "-"
+              - link "Terms" [ref=f1e19] [cursor=pointer]:
+                - /url: https://www.google.com/intl/en/policies/terms/
+    - button "Close" [active] [ref=e21] [cursor=pointer]:
+      - img [ref=e22]
+      - generic [ref=e24]: Close
+```

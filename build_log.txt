@@ -1,0 +1,35 @@
+
+> bookmycampus@0.1.0 build
+> next build
+
+   ▲ Next.js 16.0.3 (Turbopack)
+   - Environments: .env
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+(node:23572) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23573) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ Compiled successfully in 9.7s
+   Running TypeScript ...
+Failed to compile.
+
+./prisma/seed-auth.ts:84:7
+Type error: Type '{ id: string; email: string; name: string; role: any; universityId: string | null | undefined; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ id: string; email: string; name: string; role: any; universityId: string | null | undefined; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ id: string; email: string; name: string; role: any; universityId: string | null | undefined; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput>'.
+      Types of property 'universityId' are incompatible.
+        Type 'string | null | undefined' is not assignable to type 'undefined'.
+          Type 'null' is not assignable to type 'undefined'.
+
+[0m [90m 82 |[39m         universityId[33m,[39m
+ [90m 83 |[39m       }[33m,[39m
+[31m[1m>[22m[39m[90m 84 |[39m       create[33m:[39m {
+ [90m    |[39m       [31m[1m^[22m[39m
+ [90m 85 |[39m         id[33m:[39m authUser[33m.[39muser[33m.[39mid[33m,[39m [90m// Use the ID from Supabase Auth[39m
+ [90m 86 |[39m         email[33m:[39m user[33m.[39memail[33m,[39m
+ [90m 87 |[39m         name[33m:[39m user[33m.[39mname[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null
