@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BookMyCampus — AI-Powered University Facility Management
+
+A full-stack, multi-tenant facility booking platform built for university campuses. Features role-based access for administrators and students, a context-aware AI assistant, real-time database mutations, and intelligent transport routing.
+
+---
+
+## Demo
+
+https://github.com/user-attachments/assets/589358112-674ab177-a090-44e8-9947-4575d2df48d0
+
+> The demo shows a full end-to-end flow: student login → AI contextual awareness → admin facility creation with custom amenities → real-time AI knowledge update → transport routing query.
+
+---
+
+## Features
+
+### For Students
+- Browse and search facilities across their university campus
+- Book facilities with time-slot selection and instant confirmation
+- Join waitlists when facilities are at capacity
+- Ask the AI assistant questions about facilities, hours, and transport — it knows your campus
+
+### For Administrators
+- Multi-tenant dashboard supporting multiple universities
+- Create and manage facilities with a flexible amenity builder (boolean, numeric, text fields)
+- Manage student/admin accounts and role assignments
+- Define transport routes with multi-stop sequences (automatically fed into AI context)
+- Full booking oversight and event management
+
+### AI Chatbot
+- Powered by **Llama 3.3 70B** via Groq for ultra-low latency responses
+- Dynamically injected system context: user identity, role, university, all facilities, amenities, and transport stops
+- Real-time — adding a new facility immediately makes the AI aware of it
+- Responds in formatted Markdown with typing animations
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router, Turbopack) |
+| Language | TypeScript |
+| Database | PostgreSQL via Prisma ORM |
+| Auth | Custom session-based auth with bcrypt |
+| AI | Groq API — `llama-3.3-70b-versatile` via Vercel AI SDK |
+| UI | shadcn/ui + Tailwind CSS + Lucide Icons |
+| Testing/Demo | Playwright (headless automation + video recording) |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 20+
+- PostgreSQL running locally
+- A [Groq API key](https://console.groq.com)
+
+### Installation
+
+```bash
+git clone https://github.com/django0212/bms.git
+cd bms
+npm install --legacy-peer-deps
+```
+
+### Environment Setup
+
+Copy the example env file and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/bookmycampus"
+SESSION_SECRET="your-secret-key"
+GROK_KEY="your-groq-api-key"
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="your-recaptcha-site-key"
+RECAPTCHA_SECRET_KEY="your-recaptcha-secret"
+```
+
+### Database Setup
+
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
+
+### Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Seeded Accounts
 
-## Learn More
+After running `db seed`, the following accounts are available:
 
-To learn more about Next.js, take a look at the following resources:
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | `superadmin@bmc.com` | `password123` |
+| MIT Admin | `admin@mit.edu` | `password123` |
+| MIT Student | `amiller@mit.edu` | `password123` |
+| Stanford Admin | `admin@stanford.edu` | `password123` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── api/chat/         # AI streaming endpoint (Groq)
+│   ├── dashboard/        # Protected admin/student routes
+│   └── login/            # Auth pages
+├── components/
+│   ├── chat-bot.tsx      # Floating AI assistant
+│   └── sidebar.tsx       # Role-aware navigation
+├── lib/
+│   ├── auth.ts           # Session management
+│   └── db.ts             # Prisma client
+prisma/
+├── schema.prisma         # DB schema
+└── seed.ts               # Realistic multi-university seed data
+scripts/
+└── record-demo.ts        # Playwright demo automation script
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
